@@ -28,14 +28,15 @@ pipeline {
         stage('Docker Build') {
             steps {
                 script {
-                    sh "docker build -t elkaedyahya/student ."
+                    sh "docker build -t elkaedyahya/student:latest ."
                 }
             }
         }
+        
         stage('Push to DockerHub') {
             steps {
                 sh 'echo "$DOCKERHUB_CRED_PSW" | docker login -u "$DOCKERHUB_CRED_USR" --password-stdin'
-                sh 'docker push $DOCKERHUB_CRED_USR/student'
+                sh 'docker push $DOCKERHUB_CRED_USR/student:latest'
             }
         }
     }
