@@ -28,7 +28,7 @@ pipeline {
         stage('Docker Build') {
             steps {
                 script {
-                    sh "docker build -t elkaedyahya/student:latest ."
+                    sh "docker build -t $DOCKERHUB_CRED_USR/student:latest ."
                 }
             }
         }
@@ -39,5 +39,5 @@ pipeline {
                 sh 'docker push $DOCKERHUB_CRED_USR/student:latest'
             }
         }
-    }
+
 }
