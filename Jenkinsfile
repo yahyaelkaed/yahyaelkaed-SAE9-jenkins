@@ -39,5 +39,6 @@ pipeline {
                 sh 'docker push $DOCKERHUB_CRED_USR/student:latest'
             }
         }
+    }
 
 }
