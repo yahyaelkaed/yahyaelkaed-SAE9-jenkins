@@ -25,13 +25,20 @@ pipeline {
                 sh "mvn package"
             }
         }
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('sonarqube') {
-                    sh 'mvn sonar:sonar -Dsonar.projectKey=myproject -Dsonar.host.url=http://localhost:9000'
-                }
-            }
+ stage('SonarQube Analysis') {
+    steps {
+        withSonarQubeEnv('sonarqube') {
+            sh '''
+                mvn sonar:sonar \
+                -Dsonar.projectKey=myproject \
+                -Dsonar.host.url=http://localhost:9000 \
+                -Dsonar.java.coveragePlugin=jacoco \
+                -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+            '''
         }
+    }
+}
+
         stage('Docker Build') {
             steps {
                 script {
