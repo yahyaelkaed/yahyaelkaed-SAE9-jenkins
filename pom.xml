@@ -80,27 +80,29 @@
 
         <!-- JaCoCo plugin -->
         <plugin>
-            <groupId>org.jacoco</groupId>
-            <artifactId>jacoco-maven-plugin</artifactId>
-            <version>0.8.10</version>
-            <executions>
-                <!-- Prepare agent before running tests -->
-                <execution>
-                    <id>prepare-agent</id>
-                    <goals>
-                        <goal>prepare-agent</goal>
-                    </goals>
-                </execution>
-                <!-- Generate report after tests -->
-                <execution>
-                    <id>report</id>
-                    <phase>test</phase>
-                    <goals>
-                        <goal>report</goal>
-                    </goals>
-                </execution>
-            </executions>
-        </plugin>
+             <groupId>org.jacoco</groupId>
+             <artifactId>jacoco-maven-plugin</artifactId>
+             <version>0.8.10</version>
+             <executions>
+                 <execution>
+                     <id>prepare-agent</id>
+                     <goals>
+                         <goal>prepare-agent</goal>
+                     </goals>
+                 </execution>
+                 <execution>
+                     <id>report</id>
+                     <phase>test</phase>
+                     <goals>
+                         <goal>report</goal>
+                     </goals>
+                     <configuration>
+                         <xml>true</xml>
+                         <outputDirectory>${project.build.directory}/jacoco</outputDirectory>
+                     </configuration>
+                 </execution>
+             </executions>
+         </plugin>
     </plugins>
 </build>
 
