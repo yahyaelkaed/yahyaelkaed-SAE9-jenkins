@@ -26,18 +26,31 @@ pipeline {
             }
         }
  stage('SonarQube Analysis') {
-    steps {
-        withSonarQubeEnv('sonarqube') {
-            sh '''
-                mvn sonar:sonar \
-                -Dsonar.projectKey=myproject \
-                -Dsonar.host.url=http://localhost:9000 \
-                -Dsonar.java.coveragePlugin=jacoco \
-                -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
-            '''
+            steps {
+                withSonarQubeEnv('sonarqube') {
+                    sh '''
+                        mvn sonar:sonar \
+                            -Dsonar.login=$SONAR_TOKEN \
+                            -Dsonar.java.coveragePlugin=jacoco \
+                            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+                    '''
+                }
+            }
+            
+            post {
+                success {
+                    echo "✅ SonarQube analysis submitted successfully"
+                    script {
+                        // Get the actual SonarQube URL from environment
+                        def sonarUrl = env.SONAR_HOST_URL ?: 'http://localhost:9000'
+                        echo "Check results at: ${sonarUrl}/dashboard?id=tn.esprit%3Astudent-management"
+                    }
+                }
+                failure {
+                    echo "❌ SonarQube analysis failed"
+                }
+            }
         }
-    }
-}
 
         stage('Docker Build') {
             steps {
