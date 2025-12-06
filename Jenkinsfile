@@ -66,6 +66,20 @@ pipeline {
                 sh 'docker push $DOCKERHUB_CRED_USR/student:latest'
             }
         }
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    // Optional: set KUBECONFIG if using kubeconfig file
+                    sh 'kubectl create namespace devops || true'
+                    
+                    // Deploy MySQL
+                    sh 'kubectl apply -f k8s/mysql/ -n devops'
+                    
+                    // Deploy Spring Boot
+                    sh 'kubectl apply -f k8s/spring/ -n devops'
+                }
+            }
+        }
     }
 
 }
