@@ -68,16 +68,11 @@ pipeline {
         }
         stage('Deploy to Kubernetes') {
             steps {
-                script {
-                    // Optional: set KUBECONFIG if using kubeconfig file
-                    sh 'kubectl create namespace devops || true'
-                    
-                    // Deploy MySQL
-                    sh 'kubectl apply -f k8s/mysql/ -n devops'
-                    
-                    // Deploy Spring Boot
-                    sh 'kubectl apply -f k8s/spring/ -n devops'
-                }
+                sh '''
+                kubectl create namespace devops --dry-run=client -o yaml | kubectl apply -f -
+                kubectl apply -f k8s/mysql/ -n devops
+                kubectl apply -f k8s/spring/ -n devops
+                '''
             }
         }
     }
