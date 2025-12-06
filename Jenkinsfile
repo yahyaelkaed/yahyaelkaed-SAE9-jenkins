@@ -66,15 +66,35 @@ pipeline {
                 sh 'docker push $DOCKERHUB_CRED_USR/student:latest'
             }
         }
-        stage('Deploy to Kubernetes') {
-            steps {
-                sh '''
-                kubectl create namespace devops --dry-run=client -o yaml | kubectl apply -f -
-                kubectl apply -f k8s/mysql/ -n devops
-                kubectl apply -f k8s/spring/ -n devops
-                '''
+        stage("Deploy to Kubernetes") {
+        steps {
+            withCredentials([
+                string(credentialsId: 'K8S_TOKEN', variable: 'TOKEN'),
+                file(credentialsId: 'K8S_CA', variable: 'CA_FILE')
+            ]) {
+                sh """
+                    kubectl config set-cluster minikube \
+                        --server=https://127.0.0.1:32771 \
+                        --certificate-authority=$CA_FILE \
+                        --embed-certs=true
+    
+                    kubectl config set-credentials jenkins \
+                        --token=$TOKEN
+    
+                    kubectl config set-context jenkins-context \
+                        --cluster=minikube \
+                        --user=jenkins
+    
+                    kubectl config use-context jenkins-context
+    
+                    kubectl apply -f k8s/mysql-deployment.yaml -n devops
+                    kubectl apply -f k8s/configmap-secret.yaml -n devops
+                    kubectl apply -f k8s/spring-deployment.yaml -n devops
+                    kubectl apply -f k8s/spring-service.yaml -n devops
+                """
             }
         }
     }
+
 
 }
