@@ -17,9 +17,9 @@ spec:
           image: mysql:8.0
           env:
             - name: MYSQL_ROOT_PASSWORD
-              value: root123
+              value: ""   # empty to match Spring
             - name: MYSQL_DATABASE
-              value: springdb
+              value: studentdb
           ports:
             - containerPort: 3306
           volumeMounts:
