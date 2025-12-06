@@ -67,35 +67,37 @@ pipeline {
             }
         }
         stage("Deploy to Kubernetes") {
-        steps {
-            withCredentials([
-                string(credentialsId: 'K8S_TOKEN', variable: 'TOKEN'),
-                file(credentialsId: 'K8S_CA', variable: 'CA_FILE')
-            ]) {
-                sh """
-                    kubectl config set-cluster minikube \
-                        --server=https://localhost:32771 \
-                        --certificate-authority=$CA_FILE \
-                        --embed-certs=true
-    
-                    kubectl config set-credentials jenkins \
-                        --token=$TOKEN
-    
-                    kubectl config set-context jenkins-context \
-                        --cluster=minikube \
-                        --user=jenkins
-    
-                    kubectl config use-context jenkins-context
+    steps {
+        withCredentials([
+            string(credentialsId: 'K8S_TOKEN', variable: 'TOKEN')
+            // CA_FILE removed because we skip TLS verification
+        ]) {
+            sh """
+                # Configure kubectl for Jenkins using service account token
+                kubectl config set-cluster minikube \
+                    --server=https://localhost:32771 \
+                    --insecure-skip-tls-verify=true
 
-                    kubectl apply -f k8s/mysql/mysql-deployment.yaml -n devops
-                    kubectl apply -f k8s/mysql/mysql-pv-pvc.yaml -n devops
-                    kubectl apply -f k8s/mysql/mysql-service.yaml -n devops
-                    kubectl apply -f k8s/spring/spring-deployment.yaml -n devops
-                    kubectl apply -f k8s/spring/spring-service.yaml -n devops
-                """
-            }
+                kubectl config set-credentials jenkins \
+                    --token=$TOKEN
+
+                kubectl config set-context jenkins-context \
+                    --cluster=minikube \
+                    --user=jenkins
+
+                kubectl config use-context jenkins-context
+
+                # Apply Kubernetes manifests
+                kubectl apply -f k8s/mysql/mysql-deployment.yaml -n devops
+                kubectl apply -f k8s/mysql/mysql-pv-pvc.yaml -n devops
+                kubectl apply -f k8s/mysql/mysql-service.yaml -n devops
+                kubectl apply -f k8s/spring/spring-deployment.yaml -n devops
+                kubectl apply -f k8s/spring/spring-service.yaml -n devops
+            """
         }
     }
+}
+
 
 
 }
