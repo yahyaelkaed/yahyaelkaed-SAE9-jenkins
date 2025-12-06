@@ -74,7 +74,7 @@ pipeline {
             ]) {
                 sh """
                     kubectl config set-cluster minikube \
-                        --server=https://172.27.165.39:32771 \
+                        --server=https://localhost:32771 \
                         --certificate-authority=$CA_FILE \
                         --embed-certs=true
     
