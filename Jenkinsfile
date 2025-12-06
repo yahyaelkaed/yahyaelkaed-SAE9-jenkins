@@ -86,11 +86,12 @@ pipeline {
                         --user=jenkins
     
                     kubectl config use-context jenkins-context
-    
-                    kubectl apply -f k8s/mysql-deployment.yaml -n devops
-                    kubectl apply -f k8s/configmap-secret.yaml -n devops
-                    kubectl apply -f k8s/spring-deployment.yaml -n devops
-                    kubectl apply -f k8s/spring-service.yaml -n devops
+
+                    kubectl apply -f k8s/mysql/mysql-deployment.yaml -n devops
+                    kubectl apply -f k8s/mysql/mysql-pv-pvc.yaml -n devops
+                    kubectl apply -f k8s/mysql/mysql-service.yaml -n devops
+                    kubectl apply -f k8s/spring/spring-deployment.yaml -n devops
+                    kubectl apply -f k8s/spring/spring-service.yaml -n devops
                 """
             }
         }
