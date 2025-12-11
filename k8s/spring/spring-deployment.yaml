@@ -1,4 +1,4 @@
-apiVersion: apps/v1 
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: spring-app
@@ -13,26 +13,33 @@ spec:
       labels:
         app: spring-app
     spec:
-      initContainers:
-        - name: wait-for-mysql
-          image: busybox
-          command: ['sh','-c','until nc -z mysql-service 3306; do echo waiting for mysql; sleep 2; done;']
       containers:
         - name: spring-app
-          image: yahyaelkaed/student:latest
+          image: notsohealthy/student-management:1.0
           ports:
-            - containerPort: 8080
+            - containerPort: 8089
           envFrom:
             - configMapRef:
                 name: spring-config
-          env:
-            - name: SPRING_DATASOURCE_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: spring-secret
-                  key: SPRING_DATASOURCE_USERNAME
-            - name: SPRING_DATASOURCE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: spring-secret
-                  key: SPRING_DATASOURCE_PASSWORD
+            - secretRef:
+                name: spring-secret
+          # Add startup probe for Spring Boot
+          startupProbe:
+            httpGet:
+              path: /student/actuator/health
+              port: 8089
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /student/actuator/health
+              port: 8089
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /student/actuator/health
+              port: 8089
+            initialDelaySeconds: 45
+            periodSeconds: 15
