@@ -69,8 +69,14 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    sh "kubectl apply -f spring-deployment.yaml -n \$K8S_NAMESPACE"
-                    sh "kubectl rollout status deployment/spring-app -n \$K8S_NAMESPACE"
+                    // Debug first
+                    sh 'echo "Namespace: $K8S_NAMESPACE"'
+                    
+                    // Then deploy
+                    sh """
+                        kubectl apply -f spring-deployment.yaml -n $K8S_NAMESPACE
+                        kubectl rollout status deployment/spring-app -n $K8S_NAMESPACE
+                    """
                 }
             }
         }
