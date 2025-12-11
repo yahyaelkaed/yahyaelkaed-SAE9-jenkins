@@ -2,6 +2,13 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: spring-config
-  namespace: devops
+  namespace: devops  # Add namespace
 data:
-  SPRING_DATASOURCE_URL: jdbc:mysql://mysql-service:3306/studentdb?createDatabaseIfNotExist=true
+  # Use the correct database name (studentdb, not springdb)
+  # Add useSSL=false for MySQL 8 compatibility
+  SPRING_DATASOURCE_URL: "jdbc:mysql://mysql-service:3306/studentdb?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true"
+  # Add other Spring properties
+  SPRING_JPA_HIBERNATE_DDL_AUTO: "update"
+  SPRING_JPA_SHOW_SQL: "true"
+  SERVER_PORT: "8089"
+  SERVER_SERVLET_CONTEXT_PATH: "/student"
