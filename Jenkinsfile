@@ -79,10 +79,4 @@ pipeline {
         }
     }
     
-    post {
-        always {
-            sh "kubectl get pods -n devops"
-        }
-    }
-
 }
