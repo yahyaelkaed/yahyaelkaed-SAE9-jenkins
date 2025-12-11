@@ -66,37 +66,21 @@ pipeline {
                 sh 'docker push $DOCKERHUB_CRED_USR/student:latest'
             }
         }
-        stage("Deploy to Kubernetes") {
-    steps {
-        withCredentials([
-            string(credentialsId: 'K8S_TOKEN', variable: 'TOKEN')
-            // CA_FILE removed because we skip TLS verification
-        ]) {
-            sh """
-                # Configure kubectl for Jenkins using service account token
-                kubectl config set-cluster minikube \
-                    --server=https://localhost:32771 \
-                    --insecure-skip-tls-verify=true
-
-                kubectl config set-credentials jenkins \
-                    --token=$TOKEN
-
-                kubectl config set-context jenkins-context \
-                    --cluster=minikube \
-                    --user=jenkins
-
-                kubectl config use-context jenkins-context
-
-                # Apply Kubernetes manifests
-                kubectl apply -f k8s/mysql/mysql-deployment.yaml -n devops
-                kubectl apply -f k8s/mysql/mysql-pv-pvc.yaml -n devops
-                kubectl apply -f k8s/mysql/mysql-service.yaml -n devops
-                kubectl apply -f k8s/spring/spring-deployment.yaml -n devops
-                kubectl apply -f k8s/spring/spring-service.yaml -n devops
-            """
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    sh "kubectl apply -f spring-deployment.yaml -n \$K8S_NAMESPACE"
+                    sh "kubectl rollout status deployment/spring-app -n \$K8S_NAMESPACE"
+                }
+            }
         }
     }
-}
+    
+    post {
+        always {
+            sh "kubectl get pods -n \$K8S_NAMESPACE"
+        }
+    }
 
 
 
