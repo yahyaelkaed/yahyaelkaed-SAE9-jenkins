@@ -16,8 +16,11 @@ spec:
       initContainers:
         - name: wait-for-mysql
           image: busybox
-          command: ['sh','-c','until nc -z mysql-service 3306; do echo waiting for mysql; sleep 2; done;']
-    containers:
+          command:
+            - sh
+            - -c
+            - until nc -z mysql-service 3306; do echo waiting for mysql; sleep 2; done;
+      containers:
         - name: spring-app
           image: yahyaelkaed/student:latest
           ports:
