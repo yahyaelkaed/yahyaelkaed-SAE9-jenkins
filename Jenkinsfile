@@ -5,7 +5,8 @@ pipeline {
     }
     
     environment {
-    
+        
+        KUBECONFIG = '/var/lib/jenkins/.kube/config'
         DOCKERHUB_CRED = credentials('dockerhub')
     }
     stages {
