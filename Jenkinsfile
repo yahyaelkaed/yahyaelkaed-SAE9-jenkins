@@ -6,7 +6,6 @@ pipeline {
     
     environment {
         
-        KUBECONFIG = '/var/lib/jenkins/.kube/config'
         DOCKERHUB_CRED = credentials('dockerhub')
     }
     stages {
@@ -69,9 +68,12 @@ pipeline {
         }
         stage('Deploy to Kubernetes') {
             steps {
-                script {
-                    sh "kubectl apply -f k8s/spring/spring-deployment.yaml -n devops"
-                    sh "kubectl rollout status deployment/spring-app -n devops"
+                withCredentials([file(credentialsId: 'kubeconfig-minikube', variable: 'KUBECONFIG')]) {
+                    sh """
+                        kubectl apply -f k8s/spring/spring-deployment.yaml -n devops
+                        kubectl rollout status deployment/spring-app -n devops
+                        kubectl get pods -n devops
+                    """
                 }
             }
         }
