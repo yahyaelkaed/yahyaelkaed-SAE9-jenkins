@@ -16,28 +16,14 @@ spec:
       initContainers:
         - name: wait-for-mysql
           image: busybox
-          command:
-            - sh
-            - -c
-            - until nc -z mysql-service 3306; do echo waiting for mysql; sleep 2; done;
+          command: ['sh','-c','until nc -z mysql-service 3306; do echo waiting for mysql; sleep 2; done;']
       containers:
         - name: spring-app
           image: yahyaelkaed/student:latest
           ports:
             - containerPort: 8080
-          env:
-            - name: SPRING_DATASOURCE_URL
-              value: jdbc:mysql://mysql-service:3306/studentdb?createDatabaseIfNotExist=true
-            - name: SPRING_DATASOURCE_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: spring-secret
-                  key: SPRING_DATASOURCE_USERNAME
-            - name: SPRING_DATASOURCE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: spring-secret
-                  key: SPRING_DATASOURCE_PASSWORD
           envFrom:
             - configMapRef:
                 name: spring-config
+            - secretRef:
+                name: spring-secret
