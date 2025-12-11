@@ -74,15 +74,12 @@ pipeline {
                 }
             }
         }
+    }
     
     post {
         always {
             sh "kubectl get pods -n \$K8S_NAMESPACE"
         }
     }
-
-
-
-}
 
 }
