@@ -22,7 +22,10 @@ pipeline {
         }
         stage('Code Build') {
             steps {
-                sh "mvn package"
+                //sh "mvn package"
+                sh "mvn clean package -DskipTests"
+                // Or if you want to keep tests:
+                sh "mvn clean package"
             }
         }
  stage('SonarQube Analysis') {
@@ -55,7 +58,12 @@ pipeline {
         stage('Docker Build') {
             steps {
                 script {
-                    sh "docker build -t $DOCKERHUB_CRED_USR/student:latest ."
+                    sh """
+                    docker build -t \$DOCKERHUB_CRED_USR/student:latest \
+                    --build-arg JAR_FILE=target/*.jar \
+                    -f Dockerfile .
+                    """
+                    //sh "docker build -t $DOCKERHUB_CRED_USR/student:latest ."
                 }
             }
         }
