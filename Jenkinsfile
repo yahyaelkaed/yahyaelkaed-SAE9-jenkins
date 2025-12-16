@@ -54,19 +54,24 @@ pipeline {
                 }
             }
         }
-
         stage('Docker Build') {
-            steps {
-                script {
-                    sh """
-                    docker build -t \$DOCKERHUB_CRED_USR/student:latest \
-                    --build-arg JAR_FILE=target/*.jar \
+        steps {
+            script {
+                //sh "docker build -t $DOCKERHUB_CRED_USR/student:latest ."
+                sh """
+                # Ensure JAR is built and exists
+                mvn clean package -DskipTests
+                
+                # Build Docker image with no cache
+                docker build --no-cache -t \$DOCKERHUB_CRED_USR/student:latest \
+                    --build-arg JAR_FILE=target/student-management-0.0.1-SNAPSHOT.jar \
                     -f Dockerfile .
-                    """
-                    //sh "docker build -t $DOCKERHUB_CRED_USR/student:latest ."
+                """
                 }
             }
         }
+
+
         
         stage('Push to DockerHub') {
             steps {
