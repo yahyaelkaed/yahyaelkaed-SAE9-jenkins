@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/students")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200", "http://dashboard-service.devops.svc.cluster.local", "http://dashboard-service.devops"})
 @AllArgsConstructor
 public class StudentController {
 IStudentService studentService;
