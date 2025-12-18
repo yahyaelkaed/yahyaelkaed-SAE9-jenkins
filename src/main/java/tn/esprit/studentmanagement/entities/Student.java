@@ -1,8 +1,11 @@
+
 package tn.esprit.studentmanagement.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.time.LocalDate;
 import java.util.List;
