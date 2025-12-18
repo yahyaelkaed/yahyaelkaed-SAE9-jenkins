@@ -21,6 +21,7 @@ public class Enrollment {
     private Status status;
 
     @ManyToOne
+    @JsonIgnoreProperties("enrollments")
     private Student student;
 
     @ManyToOne
