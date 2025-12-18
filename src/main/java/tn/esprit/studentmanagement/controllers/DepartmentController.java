@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/Depatment")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200", "http://dashboard-service.devops.svc.cluster.local", "http://dashboard-service.devops"})
 @AllArgsConstructor
 public class DepartmentController {
     private IDepartmentService departmentService;
