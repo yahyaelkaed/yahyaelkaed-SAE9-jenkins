@@ -28,5 +28,6 @@ public class Student {
     private Department department;
 
     @OneToMany(mappedBy = "student")
+    @JsonIgnore
     private List<Enrollment> enrollments;
 }
